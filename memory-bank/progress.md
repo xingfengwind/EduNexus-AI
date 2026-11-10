@@ -1,47 +1,51 @@
 # 项目进度记忆
 
-更新日期：2026-11-10
+更新日期：2026-11-11
 
 ## 当前状态
 
-项目处于需求与设计准备阶段，尚无业务源代码、依赖锁定、数据库迁移、运行环境或部署验收。下一阶段是平台基础工程初始化及关键规则确认。
+第 0 阶段基础工程已在 `feature/phase-0` 独立工作树实施。P00-02—P00-08 与 P00-10 已完成本地验证；P00-01 等待业务规则，P00-09 等待 GitHub Actions 真实运行。项目只开发浏览器 Web，同时保留 Java 主后端和 Python AI 服务，不开发原生移动端或桌面端。
 
 ## 已完成产物
 
-| 产物 | 状态与说明 |
-| --- | --- |
-| docs/EduNexus_AI.md | 用户提供的本地总体设计说明，已阅读；不作为本次 Git 提交文件 |
-| PRD.md | 已创建并在基线提交 0f757c2 中保存 |
-| design-document.md | 已创建，细化模块、数据、契约、安全、AI、考试和部署；本次纳入文档提交 |
-| tech-stack.md | 已创建，区分基线、补充选型和待锁定项；本次纳入文档提交 |
-| CLAUD.md、AGENTS.md | 本次创建协作入口、技能映射及 Git 规则 |
-| memory-bank/architecture.md | 本次建立架构事实、不变量和未决事项 |
-| memory-bank/progress.md | 本次建立真实进度与后续工作记录 |
-| implementation-plan.md | 已拆解阶段 0—5 的实施任务、前置依赖、目标路径、测试命令与 AC-01—10 追踪；尚未执行工程任务 |
-
-## Git 与远程
-
-- 本地项目：D:/development/software1。
-- 目标仓库：https://github.com/xingfengwind/EduNexus-AI.git。
-- 已有基线提交：0f757c2；仅包含 PRD.md。
-- 此前推送因 GitHub 连接重置/超时失败，未验证远程上传成功。
-- 本次按 develop → feature/project-memory-bank 组织后续文档提交；最终提交结果以 Git 输出及本轮回复为准。
-- 尚未完成任何产品实施阶段，不建立阶段完成标签。
-- 记忆库及设计文档已在 9c324c2 本地提交；实施计划使用 feature/implementation-plan 分支，继承尚未集成的文档基线，不自动合并 main。
+- Vue 3 / TypeScript / Vite 前端脚手架、单测、构建和桌面/移动视口端到端测试。
+- Java 21 / Spring Boot 3.5 / MyBatis 后端、健康端点、默认拒绝访问、安全测试、Flyway 迁移及 Testcontainers 集成测试。
+- Python 3.12 / FastAPI AI 服务、锁定依赖、健康接口和共享事件契约测试。
+- OpenAPI 初始契约、事件信封 JSON Schema 及合法/非法共享 fixture。
+- MySQL 8.4、Redis 7.4、RustFS 的 Compose 环境和跨重启持久性验证脚本。
+- GitHub Actions 前端、后端、Python 与 Compose 配置检查工作流。
+- 阿里云百炼 `kimi-k3.1-pro` 后端配置占位；精确北京接入地址已记录，真实密钥未写入文件。
 
 ## 验证记录
 
-已有 PRD、设计及技术文档进行过基础格式与引用检查。本次提交前检查内部链接、代码围栏、暂存文件范围及 git diff --check。尚未执行应用单测、集成测试、AI 评测、性能测试或恢复演练，因为工程尚未实现；不得记录为已通过。
+详细命令和结论见 `docs/verification/phase-0.md`。本地已通过：
 
-实施计划本次检查任务编号唯一性、前置任务引用、内部文件链接、代码围栏与暂存格式；计划中的 F/J/P/E/C 命令是后续工程建立后的执行约定，不是本次已运行的测试。
+- 前端安装、lint、类型检查、1 项单测、生产构建、桌面和移动视口 E2E；全依赖无高危/严重项，生产依赖 0 项漏洞。
+- 后端 Maven `verify`，包含健康/安全、事件契约及 MySQL 迁移集成测试。
+- Python 锁定同步、Ruff、格式检查和 3 项 pytest。
+- Compose 配置解析及 MySQL/Redis/RustFS 写入、重启、持久性与私有对象验证。
+
+## 未完成与风险
+
+1. P00-01：默认注册角色/状态、学生核验、教师审核、管理员初始化与角色授予、上传配额及格式规则仍未确认。
+2. P00-09：工作流尚未在 GitHub Actions 中完成一次故意失败再修正的红/绿记录，也未验证远程干净检出。
+3. Flyway 对 MySQL 8.4 有正式测试范围告警；本地通过不等于生产兼容承诺。
+4. RustFS 当前固定预发布版本，生产升级与恢复路径待评估。
+5. 前端开发工具链仍有 10 项中等级传递依赖告警，等待上游修复或兼容升级。
+6. 聊天模型已确认；Embedding、OCR、数据外发政策与额度待第 2 阶段确定。
+
+## Git 与远程
+
+- 基础工作区：`D:/development/software1`；第 0 阶段工作区：`D:/development/software1-phase0`。
+- 当前分支：`feature/phase-0`；首个工程提交：`3ccc39e`。
+- 目标仓库：`https://github.com/xingfengwind/EduNexus-AI.git`。
+- 本轮只进行明确暂存和本地提交；在远程结果可核验前，不把 P00-09 标记完成，不强推覆盖历史。
 
 ## 下一步
 
-1. 确认身份核验、默认角色、文件规则及第一阶段最小交付范围。
-2. 验证并锁定 Java/Spring Boot/MyBatis、Node/Vite、Python/解析依赖兼容版本。
-3. 创建 frontend、backend、ai-service 与 deploy 工程及配置模板。
-4. 按测试驱动实现身份权限、文件和课程基础，建立迁移、CI 与真实组件集成测试。
-5. 网络恢复后核对远程分支关系并按授权推送，不能强推覆盖远程历史。
+1. 用户确认 P00-01 五类业务规则后形成最终决策记录。
+2. 推送功能分支并观察 GitHub Actions；保留失败阻断和修复通过记录，关闭 P00-09。
+3. 第 0 阶段全部关闭后，再进入身份、权限和文件基础的第 1 阶段。
 
 ## 更新规则
 

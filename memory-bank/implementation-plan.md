@@ -68,15 +68,15 @@ AI 真实供应商评测与离线单测分开：离线使用确定性合成结�
 | 完成 | 编号 / 依赖 | 小任务与目标文件 | 验证项 / 完成条件 |
 | --- | --- | --- | --- |
 | [ ] | P00-01 / 无 | 创建 docs/decisions/phase-1-rules.md，列出默认账号、学生核验、教师审核、角色授予、文件配额与类型规则，取得明确结论 | 文档逐项标记确认人/状态；未确认规则不编码为既定事实 |
-| [ ] | P00-02 / 无 | 创建 docs/decisions/version-matrix.md，选包根并验证运行时、Boot/MyBatis、Node/Vite、Python 的兼容组合 | 最小依赖解析及编译成功，记录精确版本及依据；更新 tech-stack.md |
-| [ ] | P00-03 / 02 | 创建根 .gitignore、.editorconfig、README.md 和配置占位模板 | D；本地参考原文、.env、数据卷、构建缓存不被误暂存 |
-| [ ] | P00-04 / 02、03 | 创建 frontend/package.json、锁文件和 src/app 基础入口；定义 F/E 脚本 | npm ci 后 F 通过；一项页面标题测试可执行 |
-| [ ] | P00-05 / 02、03 | 创建 backend/pom.xml、Wrapper、启动类和健康端点 | J；健康端点集成测试通过，无默认开放业务接口 |
-| [ ] | P00-06 / 02、03 | 创建 ai-service/pyproject.toml、uv.lock、app/api/health.py 与测试 | P；健康请求返回预期 Schema |
-| [ ] | P00-07 / 05 | 创建首个迁移及 Flyway 配置；建立 Testcontainers 和 Failsafe 测试接线 | J；全新 MySQL 可迁移，重复启动不重复建表，verify 确实执行集成测试 |
-| [ ] | P00-08 / 03、05 | 创建 Compose 的 MySQL/Redis/RustFS 基础 profile 和持久卷 | C；重启后合成记录仍存在，内部组件不公开暴露 |
+| [x] | P00-02 / 无 | 创建 docs/decisions/version-matrix.md，选包根并验证运行时、Boot/MyBatis、Node/Vite、Python 的兼容组合 | 最小依赖解析及编译成功，记录精确版本及依据；更新 tech-stack.md |
+| [x] | P00-03 / 02 | 创建根 .gitignore、.editorconfig、README.md 和配置占位模板 | D；本地参考原文、.env、数据卷、构建缓存不被误暂存 |
+| [x] | P00-04 / 02、03 | 创建 frontend/package.json、锁文件和 src/app 基础入口；定义 F/E 脚本 | npm ci 后 F 通过；一项页面标题测试可执行 |
+| [x] | P00-05 / 02、03 | 创建 backend/pom.xml、Wrapper、启动类和健康端点 | J；健康端点集成测试通过，无默认开放业务接口 |
+| [x] | P00-06 / 02、03 | 创建 ai-service/pyproject.toml、uv.lock、app/api/health.py 与测试 | P；健康请求返回预期 Schema |
+| [x] | P00-07 / 05 | 创建首个迁移及 Flyway 配置；建立 Testcontainers 和 Failsafe 测试接线 | J；全新 MySQL 可迁移，重复启动不重复建表，verify 确实执行集成测试 |
+| [x] | P00-08 / 03、05 | 创建 Compose 的 MySQL/Redis/RustFS 基础 profile 和持久卷 | C；重启后合成记录仍存在，内部组件不公开暴露 |
 | [ ] | P00-09 / 04—08 | 创建 CI 的前端、Java、Python 检查及集成任务 | 故意引入失败样例验证 CI 阻止通过，再修正；干净检出构建成功 |
-| [ ] | P00-10 / 05、06 | 创建 contracts/openapi.yaml 和 events 基本信封 Schema | 两端验证同一合成 fixture，未知 schemaVersion 被拒绝 |
+| [x] | P00-10 / 05、06 | 创建 contracts/openapi.yaml 和 events 基本信封 Schema | 两端验证同一合成 fixture，未知 schemaVersion 被拒绝 |
 
 ## 5. 阶段 1：身份、资料与课程基础
 

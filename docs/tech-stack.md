@@ -10,7 +10,7 @@
 
 采用 Vue 3 响应式 Web、Spring Boot 模块化单体与独立 Python AI 服务。MySQL 保存正式业务数据，RustFS 保存文件，RabbitMQ 承担可靠异步任务；Redis、Elasticsearch、Milvus、MongoDB 各自承担缓存、全文、向量与文档型中间数据职责。
 
-本文区分“基线已确认”和“本次补充选定”：前者来自已有文档，后者用于补齐构建、测试和工程工具。技术选型不等于依赖已安装或兼容性已验证。精确版本在工程初始化时锁定，不使用浮动 latest，不把待验证版本写成已确认事实。
+本文区分“基线已确认”和“本次补充选定”：前者来自已有文档，后者用于补齐构建、测试和工程工具。第 0 阶段已锁定并验证基础工程版本，精确清单见 [version-matrix.md](decisions/version-matrix.md)；后续尚未启用的组件仍不得写成已验证事实。
 
 ## 2. 前端
 
@@ -29,7 +29,7 @@
 | Vitest、Vue Test Utils | 本次补充选定 | 单元及组件测试 |
 | Playwright | 本次补充选定 | 关键用户流程和响应式端到端测试 |
 
-运行时选择仍受支持的 Node.js LTS，并满足锁定 Vite 的最低版本要求。Node 精确版本与前端依赖同时写入版本文件和 CI，不仅依赖开发者本机环境。Vite 的环境要求以[官方指南](https://vite.dev/guide/)为准。
+前端锁定 Node.js 24.14.0、Vue 3.5.45、Vite 7.3.8，并将 Node 版本同时写入版本文件和 CI。`npm ci`、静态检查、类型检查、单测、构建及 Playwright 桌面/移动视口测试均已通过。Vite 的环境要求以[官方指南](https://vite.dev/guide/)为准。
 
 前端静态产物由 Nginx 托管。浏览器不直连 Python、数据库、消息队列或模型供应商；模型密钥不进入打包产物。
 
@@ -52,7 +52,7 @@
 | JUnit Jupiter、Mockito、Spring Boot Test | 本次补充选定 | 领域单测、服务及接口测试；版本随兼容 BOM 锁定 |
 | Testcontainers | 本次补充选定 | 使用真实 MySQL、RabbitMQ 等容器做集成验证 |
 
-初始化时先验证 Spring Boot、Java、MyBatis Starter、Spring Security、Flyway 和测试组件的共同兼容版本，再生成 pom.xml，不能分别追逐最新版本。Java 与构建要求参见 [Spring Boot 官方系统要求](https://docs.spring.io/spring-boot/system-requirements.html)；容器集成测试参见[官方测试支持](https://docs.spring.io/spring-boot/reference/testing/testcontainers.html)。
+后端锁定 Java 21.0.10、Spring Boot 3.5.16、MyBatis Starter 3.0.5 与 Maven Wrapper 3.9.11。`mvn verify` 已通过单元、契约及 Testcontainers/MySQL 迁移集成测试。Flyway 对 MySQL 8.4 的正式兼容范围仍有告警，生产前持续跟踪。Java 与构建要求参见 [Spring Boot 官方系统要求](https://docs.spring.io/spring-boot/system-requirements.html)；容器集成测试参见[官方测试支持](https://docs.spring.io/spring-boot/reference/testing/testcontainers.html)。
 
 普通业务模块采用 MVC；课程、资源审核、任务、考试成绩等复杂域使用 DDD 思想分层。模块之间通过公开服务及事件协作，不直接访问其他模块 Mapper。
 
@@ -73,7 +73,7 @@
 
 按 FastAPI 的[容器部署说明](https://fastapi.tiangolo.com/deployment/docker/)构建项目自己的镜像。Worker 负责持久任务消费，FastAPI 进程内后台任务不作为长任务可靠队列。
 
-文档解析实现采用 Parser 接口；PDF、Word、PPT、TXT、MD 的具体解析库在样本验证后锁定，验证页码保真、加密/损坏文件、中文、表格及许可。OCR、Embedding、聊天与重排序模型分别配置 Provider，不假设一个模型覆盖所有能力。模型供应商、模型标识、向量维度、额度、外发数据政策仍待确认。
+Python 基础运行时锁定 3.12.14，使用 uv 0.13.7、FastAPI 0.162.2、Pydantic 2.14.3 与 Uvicorn 0.54.0；锁定同步、Ruff 和健康/契约测试均已通过。文档解析实现采用 Parser 接口；PDF、Word、PPT、TXT、MD 的具体解析库在样本验证后锁定。OCR、Embedding、聊天与重排序模型分别配置 Provider，不假设一个模型覆盖所有能力。聊天模型已确认使用阿里云百炼 `kimi-k3.1-pro`，精确北京接入地址见 [ai-provider.md](decisions/ai-provider.md)；向量模型、额度与外发数据政策仍待确认。
 
 Python 不直接写 Java 核心业务表；结构校验通过后仍由 Java 执行业务校验和正式发布。
 
@@ -146,6 +146,6 @@ Milvus 所需元数据及对象存储组件按选定版本的部署要求确定�
 4. 执行空工程构建、数据库迁移、认证接口、S3 文件读写、RabbitMQ 重复消息、Python/Java 契约、检索权限和文件解析样本验证。
 5. 完成许可证与依赖漏洞检查，记录例外；验证成功后将精确版本写入本文件或独立版本清单。
 
-待确认项：具体运行时及组件版本、模型供应商、解析器/OCR 实现、Milvus 部署依赖、存储参数、容量与恢复指标。它们不改变已选技术类别，但必须在对应功能实施前关闭。
+待确认项：第 0 阶段以外的组件版本、解析器/OCR 与向量模型、Milvus 部署依赖、存储参数、容量与恢复指标。它们不改变已选技术类别，但必须在对应功能实施前关闭。
 
-本文仅形成技术选型，尚未创建工程、安装依赖或完成兼容性联调。
+第 0 阶段基础工程已创建并完成本地兼容性联调；实际证据、已知告警与未完成项见 [phase-0.md](verification/phase-0.md)。

@@ -10,4 +10,4 @@ Scope confirmed by user: Web product only; no native mobile or desktop client. V
 | Administrator bootstrap and role grant | Pending user decision | No public self-promotion |
 | Upload limits/quota and exact formats | Pending user decision | Server-side validation required |
 
-P00-01 remains open until decisions are confirmed. Engineering setup independent of these decisions may proceed. A model credential was supplied in chat; its value is intentionally not persisted. Provider, endpoint and model remain unknown.
+P00-01 remains open until decisions are confirmed. Engineering setup independent of these decisions may proceed. A model credential was supplied in chat; its value is intentionally not persisted. Provider confirmed as Alibaba Cloud Bailian, model as `kimi-k3.1-pro`, and the exact Beijing OpenAI-compatible endpoint is recorded in `ai-provider.md`.
