@@ -43,4 +43,6 @@ Exact transitive versions are recorded in ai-service/uv.lock; uv sync --locked a
 
 Compose pins MySQL 8.4.8, Redis 7.4.8, RustFS 1.0.0-alpha.76. A local restart test verified persistence in all three services and rejected anonymous RustFS object access. Flyway currently warns that MySQL 8.4 is newer than its formally tested range; MySQL 8.4 is retained because it is the supported LTS line, and this compatibility warning must be tracked before production. RustFS is prerelease; production suitability and upgrade path require separate assessment.
 
+GitHub Actions pins Ubuntu 24.04, checkout v7, setup-node v7, setup-java v6 and setup-uv v10.3.2. A deliberately failing unit assertion was rejected remotely and the restored clean checkout passed all four jobs.
+
 References: https://docs.spring.io/spring-boot/3.5/system-requirements.html and https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/ .

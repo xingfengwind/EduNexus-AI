@@ -75,7 +75,7 @@ AI 真实供应商评测与离线单测分开：离线使用确定性合成结�
 | [x] | P00-06 / 02、03 | 创建 ai-service/pyproject.toml、uv.lock、app/api/health.py 与测试 | P；健康请求返回预期 Schema |
 | [x] | P00-07 / 05 | 创建首个迁移及 Flyway 配置；建立 Testcontainers 和 Failsafe 测试接线 | J；全新 MySQL 可迁移，重复启动不重复建表，verify 确实执行集成测试 |
 | [x] | P00-08 / 03、05 | 创建 Compose 的 MySQL/Redis/RustFS 基础 profile 和持久卷 | C；重启后合成记录仍存在，内部组件不公开暴露 |
-| [ ] | P00-09 / 04—08 | 创建 CI 的前端、Java、Python 检查及集成任务 | 故意引入失败样例验证 CI 阻止通过，再修正；干净检出构建成功 |
+| [x] | P00-09 / 04—08 | 创建 CI 的前端、Java、Python 检查及集成任务 | 故意引入失败样例验证 CI 阻止通过，再修正；干净检出构建成功 |
 | [x] | P00-10 / 05、06 | 创建 contracts/openapi.yaml 和 events 基本信封 Schema | 两端验证同一合成 fixture，未知 schemaVersion 被拒绝 |
 
 ## 5. 阶段 1：身份、资料与课程基础

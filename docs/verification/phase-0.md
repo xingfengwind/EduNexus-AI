@@ -15,12 +15,12 @@
 | P00-06 AI 服务 | Ruff、格式检查、健康接口与事件契约测试通过，共 3 项测试 |
 | P00-07 数据迁移 | Maven `verify` 启动 Testcontainers MySQL；全新迁移、重复迁移和校验通过，Failsafe 确实执行集成测试 |
 | P00-08 基础设施 | MySQL、Redis 与 RustFS 写入合成数据后重启，数据仍存在；RustFS 匿名对象访问被拒绝 |
+| P00-09 CI | GitHub Actions 前端、Java、Python、Compose 四项任务完成红/绿验证：临时失败断言被[运行 #4](https://github.com/xingfengwind/EduNexus-AI/actions/runs/42854559223)阻断，删除后[运行 #5](https://github.com/xingfengwind/EduNexus-AI/actions/runs/42856449071)通过 |
 | P00-10 共享契约 | Java 与 Python 对同一合法事件 fixture 接受，对未知 `schemaVersion` fixture 拒绝 |
 
 ## 尚未关闭
 
 - P00-01：默认账号、学生身份核验、教师审核、管理员授予及文件配额/格式仍需用户确认，未编码为既定规则。
-- P00-09：CI 工作流已创建并在本地逐项验证，尚未推送到 GitHub 触发真实 Actions 红/绿验证，因此保持未完成。
 
 ## 已知告警
 
