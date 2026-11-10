@@ -1,0 +1,20 @@
+openapi: 3.1.0
+info:
+  title: EduNexus Web API
+  version: 0.0.1
+paths:
+  /api/v1/health:
+    get:
+      operationId: getBackendHealth
+      responses:
+        '200':
+          description: Process health only; not infrastructure readiness
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [status, service]
+                properties:
+                  status: {const: ok}
+                  service: {const: edunexus-backend}
