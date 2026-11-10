@@ -2,6 +2,10 @@ import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import App from "../../src/app/App.vue";
 describe("P00-04 Web entry", () => {
+  it("temporarily proves CI rejects a failing assertion", () => {
+    expect("ci-red-probe").toBe("ci-green");
+  });
+
   it("identifies the platform and does not offer nonfunctional business actions", () => {
     const page = mount(App);
     expect(page.get("h1").text()).toBe("EduNexus AI");
