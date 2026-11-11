@@ -26,7 +26,7 @@
 
 ## 2. 文件职责与测试位置
 
-以下路径是将要创建的目标；当前尚未建立工程。Java 包根建议 `com.edunexus`，实际包名在 P00-02 锁定；下文 `backend/src/main/java/com/edunexus/` 简称 `J/`，测试根 `backend/src/test/java/com/edunexus/` 简称 `JT/`。每个模块内按设计采用 MVC 或领域分层。
+以下路径涵盖现有工程与后续阶段目标；阶段 0 的前端、Java 后端、AI 服务、共享契约和基础设施目录已建立，阶段 1 及后续功能路径按对应任务创建。Java 包根已锁定为 `com.edunexus`；下文 `backend/src/main/java/com/edunexus/` 简称 `J/`，测试根 `backend/src/test/java/com/edunexus/` 简称 `JT/`。每个模块内按设计采用 MVC 或领域分层。
 
 | 路径 | 职责 |
 | --- | --- |
