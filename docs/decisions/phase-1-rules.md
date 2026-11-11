@@ -1,13 +1,60 @@
-# Phase 1 decisions
+# 第 1 阶段身份与上传规则决策
 
-Scope confirmed by user: Web product only; no native mobile or desktop client. Vue, Java and Python responsibilities remain per design.
+- 决策编号：P00-01
+- 状态：已确认
+- 确认人：用户
+- 确认日期：2026-11-11
+- 适用范围：第 1 阶段注册、身份核验、角色授予和个人文件上传
 
-| Rule | Status | Constraint |
+本记录是第 1 阶段实现与测试的约束。后续变更必须新增或修订决策记录，不得通过前端参数、部署默认值或未记录的人工操作静默改变。
+
+## 1. 注册、身份与角色
+
+1. 自助注册只能由服务端固定创建 `STUDENT`（学生）角色和 `PENDING_VERIFICATION`（待核验）身份状态。注册接口不得接受可生效的角色、已核验状态或管理权限字段；出现这类提权字段时请求必须被拒绝。
+2. 待核验账号不等同于已核验学生，不能访问要求学生身份已核验的课程或资源。前端隐藏入口不能替代服务端状态校验。
+3. 学生的标准核验路径是学校邮箱验证：邮箱域名必须命中服务端配置的学校域名允许列表，验证凭证只能发往该邮箱，凭证成功校验后才可转为已核验。客户端提交的“已核验”声明无效。
+4. 管理员可以对无法完成学校邮箱验证的学生进行人工处理。人工批准或拒绝必须经过管理员鉴权，并记录操作者、目标账号、原状态、新状态、时间和原因；学生、教师及匿名用户不能调用该状态变更能力。
+5. 教师权限只由管理员在人工审核后授予。注册、登录、邮箱验证和教师申请本身都不能直接产生教师权限；审核前后必须记录身份状态和角色变更审计。
+6. 首位管理员仅在部署期间通过一次性的安全初始化流程创建，不提供公开自助注册或自助提权入口。初始化凭据通过受控运行环境或密钥管理注入，不写入仓库、日志或本文档；创建成功后，同一初始化流程再次执行不得新增管理员或改写其凭据。
+7. 首位管理员创建后，除注册时由系统固定赋予的学生角色外，任何角色的新增、移除或变更都只能由已认证且有权的管理员执行，并写入审计。任何用户都不能批准自己的身份或通过请求参数、令牌声明、直接接口调用取得更高权限。
+
+## 2. 允许的上传格式
+
+扩展名按不区分大小写的最终文件扩展名判断；例如 `.PDF` 归一为 `.pdf`，而最终扩展名不在列表中的双扩展名文件必须拒绝。允许矩阵如下：
+
+| 扩展名 | 允许的 MIME | 服务端内容判定 |
 | --- | --- | --- |
-| Default registration role/state | Pending user decision | No self-assigned privileged role |
-| Student identity verification | Pending user decision | Do not invent institutional verification |
-| Teacher approval | Pending user decision | Privilege requires authorized approval |
-| Administrator bootstrap and role grant | Pending user decision | No public self-promotion |
-| Upload limits/quota and exact formats | Pending user decision | Server-side validation required |
+| `.pdf` | `application/pdf` | PDF 文件签名和解析结果有效 |
+| `.docx` | `application/vnd.openxmlformats-officedocument.wordprocessingml.document` | 有效 OOXML Word 容器及必需结构 |
+| `.pptx` | `application/vnd.openxmlformats-officedocument.presentationml.presentation` | 有效 OOXML PowerPoint 容器及必需结构 |
+| `.txt` | `text/plain` | 可识别为文本，不能是伪装的二进制文件 |
+| `.md` | `text/markdown` 或 `text/plain` | 可识别为文本，不能是伪装的二进制文件 |
 
-P00-01 remains open until decisions are confirmed. Engineering setup independent of these decisions may proceed. A model credential was supplied in chat; its value is intentionally not persisted. Provider confirmed as Alibaba Cloud Bailian, model as `kimi-k3.1-pro`, and the exact Beijing OpenAI-compatible endpoint is recorded in `ai-provider.md`.
+服务端必须同时验证归一化扩展名、检测到的 MIME/文件类型和实际内容，三者须与同一矩阵行一致；客户端文件名和 `Content-Type` 仅作输入，不能作为可信判定。损坏、无法识别、扩展名伪装或容器结构不符的文件在持久化完成前拒绝。旧式 `.doc`、`.ppt` 以及矩阵外格式不允许上传。
+
+## 3. 大小与个人总配额
+
+- 计量单位统一为十进制字节：`1 MB = 1,000,000 bytes`，`1 GB = 1,000,000,000 bytes`。
+- 单个文件上限为 `100,000,000 bytes`，恰好等于上限允许，超过 1 字节即拒绝。计量对象是收到并准备持久化的文件对象正文，不含 HTTP/multipart 元数据；PDF/OOXML 按上传容器的实际字节数计量，解压后的安全限制另行配置且不能放宽本上限。
+- 每个用户的个人总配额为 `5,000,000,000 bytes`，恰好等于上限允许。已用配额是 `owner_id` 为该用户且仍实际占用对象存储的所有已持久化文件版本之 `size_bytes` 总和；同一文件的不同版本分别计费，共享他人文件不计入接收者配额，也不重复计费。
+- 软删除但对象仍保留的版本继续占用配额；对象确认物理删除后才释放。失败或未完成上传在清理其对象和配额预留后不计入已用配额。
+- 服务端在接受上传前必须以原子预留或等效并发控制校验 `已用字节 + 进行中预留字节 + 新文件字节 <= 5,000,000,000`。两个并发请求不得共同突破个人总配额；超限请求不得留下可访问文件版本或永久配额占用。
+
+## 4. 必须覆盖的验收场景
+
+| 场景 | 预期结果 |
+| --- | --- |
+| 注册请求不带角色 | 创建学生账号，身份为待核验 |
+| 注册请求声明教师、管理员或已核验 | 服务端拒绝，账号不获得所声明权限 |
+| 学校邮箱验证成功 / 非学校域名验证 | 前者可转为已核验；后者不能走标准邮箱核验路径 |
+| 普通用户人工核验自己或授予教师角色 | 服务端拒绝，状态和角色不变 |
+| 管理员人工核验或批准教师 | 在授权通过并写入审计后生效 |
+| 首位管理员初始化重复执行 | 不新增管理员，不覆盖既有凭据 |
+| 合法扩展名但 MIME 或内容不符 | 上传拒绝，不生成可访问文件版本 |
+| 文件为 100,000,000 / 100,000,001 字节 | 前者在配额允许时接受，后者拒绝 |
+| 总占用达到 5,000,000,000 / 5,000,000,001 字节 | 前者允许，后者拒绝 |
+| 两个并发上传各自看似未超额但合计超额 | 最多只有满足总配额的请求成功 |
+
+## 5. 安全记录边界
+
+仓库、决策记录、测试 fixture 和日志不得写入真实密钥、初始化密码、验证凭证、私人文件正文或真实学生个人数据。测试仅使用合成账号、合成文件和占位配置；运行时秘密由受控环境注入。
